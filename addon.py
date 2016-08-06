@@ -24,8 +24,8 @@ except KeyError:
     #create popup
 
 def root():
-    addDir(get_translation(30005), '', 'recs', '')
-    addDir(get_translation(30006), '', 'fnds', '')
+    addDir(get_translation(30005), '', 'recs', '', '')
+    addDir(get_translation(30006), '', 'fnds', '', '')
 
 
 
@@ -50,13 +50,16 @@ def get_friends(xuid):
         fr_xuid = str(friend['id'])
         name = friend['Gamertag']
         thumb = friend['GameDisplayPicRaw']
-        addDir(name, fr_xuid, 'frnd', thumb)
+        gmrsc = str(friend['Gamerscore'])
+        addDir(name, fr_xuid, 'frnd', thumb, gmrsc)
 
 
 def get_user_presence(name, xuid):
     data = xbl.get_user_presence(xuid)
+    gmrsc = xbmc.getInfoLabel("ListItem.Writer")
     usr_state = data['state']
-    name = unquote(name).decode('utf8')
+    #name = unquote(name).decode('utf8')
+    name = xbmc.getInfoLabel("ListItem.Title")
     name += get_translation(30020) + usr_state
     if usr_state == 'Online':
         state = get_translation(30021) + data['devices'][0]['titles'][1]['name']
@@ -66,16 +69,19 @@ def get_user_presence(name, xuid):
             state = get_translation(30022) + data['lastSeen']['titleName']
         except:
             pass
-    addDir(name, '', '', '')
+    addDir(name, '', 'end', '', '')
     if 'lastSeen' in data:
-        addDir(state, '', '', '')
+        addDir(state, '', 'end', '', '')
+    gmrsc = get_translation(30023) + gmrsc
+    addDir(gmrsc, '', 'end', '', '')
 
 
-def addDir(name, url, mode, iconimage):
-    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name)
+
+def addDir(name, url, mode, iconimage, extra1):
+    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name)# + "&extra1=" + str(extra1)
     ok = True
     item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-    item.setInfo(type="Video", infoLabels={"Title": name})
+    item.setInfo(type="Video", infoLabels={"Title": name, "Writer": extra1})
     item.setProperty('fanart_image', fanart)
     xbmcplugin.addDirectoryItem(pluginhandle, url=u, listitem=item, isFolder=True)
 
@@ -88,7 +94,6 @@ def addLink(name, url, mode, iconimage, desc, duration, date, fanart):
     item.setProperty('IsPlayable', 'true')
     item.setProperty('fanart_image', fanart)
     xbmcplugin.addDirectoryItem(pluginhandle, url=u, listitem=item)
-    xbmc.executebuiltin("Container.SetSortMethod(7)")
 
 
 def play(url):
@@ -120,6 +125,7 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = params.get('mode')
 url = params.get('url')
 name = params.get('name')
+#extra1 = params.get('extra1')
 if type(url) == type(str()):
     url = unquote_plus(url)
 
@@ -132,6 +138,8 @@ elif mode == 'frnd':
     get_user_presence(name, url)
 elif mode == 'play':
     play(url)
+elif mode == 'end':
+    pass
 else:
     root()
 
