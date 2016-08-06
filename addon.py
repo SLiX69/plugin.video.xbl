@@ -79,12 +79,12 @@ def get_user_presence(name, xuid):
             state = get_translation(30022) + data['lastSeen']['titleName']
         except:
             pass
+
     addDir(name, '', 'end', thumb, fanart, '')
-    if 'lastSeen' in data:
+    if 'lastSeen' in data or usr_state == 'Online':
         addDir(state, '', 'end', thumb, fanart, '')
     gmrsc = get_translation(30023) + gmrsc
     addDir(gmrsc, '', 'end', thumb, fanart, '')
-
 
 
 def addDir(name, url, mode, iconimage, fanart, extra1):
