@@ -2,5 +2,7 @@
 <settings>
     <category label="30100">
         <setting label="30110" type="text" id="api-key" default=""/>
+		<setting label="30115" type="bool" id="fr_fnart" default="true"/>
+		<setting label="30116" type="bool" id="fr_thumb" default="true"/>
     </category>
 </settings>

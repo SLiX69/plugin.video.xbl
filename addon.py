@@ -12,7 +12,11 @@ pluginhandle = int(sys.argv[1])
 loglevel = 1
 log_msg = addonID + ' - '
 
+fr_fanart = False
+fr_thumb = False
 api_key = addon.getSetting('api-key')
+if addon.getSetting('fr_fnart') == 'true': fr_fnart = True
+if addon.getSetting('fr_thumb') == 'true': fr_thumb = True
 
 xbl = XboxApi(api_key)
 
@@ -24,9 +28,8 @@ except KeyError:
     #create popup
 
 def root():
-    addDir(get_translation(30005), '', 'recs', '', '')
-    addDir(get_translation(30006), '', 'fnds', '', '')
-
+    addDir(get_translation(30005), '', 'recs', '', '', '')
+    addDir(get_translation(30006), '', 'fnds', '', '', '')
 
 
 def get_recordings():
@@ -46,17 +49,24 @@ def get_recordings():
 
 def get_friends(xuid):
     data = xbl.get_user_friends(xuid)
+    fanart = ''
+    thumb = ''
     for friend in data:
         fr_xuid = str(friend['id'])
         name = friend['Gamertag']
-        thumb = friend['GameDisplayPicRaw']
         gmrsc = str(friend['Gamerscore'])
-        addDir(name, fr_xuid, 'frnd', thumb, gmrsc)
+        if fr_thumb:
+            thumb = friend['GameDisplayPicRaw']
+        if fr_fnart:
+            fanart = thumb
+        addDir(name, fr_xuid, 'frnd', thumb, fanart,  gmrsc)
 
 
 def get_user_presence(name, xuid):
     data = xbl.get_user_presence(xuid)
     gmrsc = xbmc.getInfoLabel("ListItem.Writer")
+    thumb = xbmc.getInfoLabel("ListItem.Thumb")
+    fanart = xbmc.getInfoLabel("ListItem.Art(fanart)")
     usr_state = data['state']
     #name = unquote(name).decode('utf8')
     name = xbmc.getInfoLabel("ListItem.Title")
@@ -69,15 +79,15 @@ def get_user_presence(name, xuid):
             state = get_translation(30022) + data['lastSeen']['titleName']
         except:
             pass
-    addDir(name, '', 'end', '', '')
+    addDir(name, '', 'end', thumb, fanart, '')
     if 'lastSeen' in data:
-        addDir(state, '', 'end', '', '')
+        addDir(state, '', 'end', thumb, fanart, '')
     gmrsc = get_translation(30023) + gmrsc
-    addDir(gmrsc, '', 'end', '', '')
+    addDir(gmrsc, '', 'end', thumb, fanart, '')
 
 
 
-def addDir(name, url, mode, iconimage, extra1):
+def addDir(name, url, mode, iconimage, fanart, extra1):
     u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name)# + "&extra1=" + str(extra1)
     ok = True
     item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
