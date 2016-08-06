@@ -25,6 +25,8 @@ except KeyError:
 
 def root():
     addDir(get_translation(30005), '', 'recs', '')
+    addDir(get_translation(30006), '', 'fnds', '')
+
 
 
 def get_recordings():
@@ -40,6 +42,33 @@ def get_recordings():
             xbmc.log(name)
             xbmc.log(url1)
             addLink(name, url1, 'play', thumb_sma, '', '', '', thumb_big)
+
+
+def get_friends(xuid):
+    data = xbl.get_user_friends(xuid)
+    for friend in data:
+        fr_xuid = str(friend['id'])
+        name = friend['Gamertag']
+        thumb = friend['GameDisplayPicRaw']
+        addDir(name, fr_xuid, 'frnd', thumb)
+
+
+def get_user_presence(name, xuid):
+    data = xbl.get_user_presence(xuid)
+    usr_state = data['state']
+    name = unquote(name).decode('utf8')
+    name += get_translation(30020) + usr_state
+    if usr_state == 'Online':
+        state = get_translation(30021) + data['devices'][0]['titles'][1]['name']
+    elif usr_state == 'Offline':
+        # lastSeen may not be available
+        try:
+            state = get_translation(30022) + data['lastSeen']['titleName']
+        except:
+            pass
+    addDir(name, '', '', '')
+    if 'lastSeen' in data:
+        addDir(state, '', '', '')
 
 
 def addDir(name, url, mode, iconimage):
@@ -90,12 +119,17 @@ def parameters_string_to_dict(parameters):
 params = parameters_string_to_dict(sys.argv[2])
 mode = params.get('mode')
 url = params.get('url')
+name = params.get('name')
 if type(url) == type(str()):
     url = unquote_plus(url)
 
 
 if mode == 'recs':
     get_recordings()
+elif mode == 'fnds':
+    get_friends(xuid)
+elif mode == 'frnd':
+    get_user_presence(name, url)
 elif mode == 'play':
     play(url)
 else:
