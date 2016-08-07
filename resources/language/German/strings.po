@@ -22,6 +22,10 @@ msgid "Aufnahmen"
 msgstr "Recordings"
 
 msgctxt "#30006"
+msgid "Screenshots"
+msgstr "Screenshots"
+
+msgctxt "#30007"
 msgid "Freunde"
 msgstr "Friends"
 
@@ -29,9 +33,9 @@ msgctxt "#30020"
 msgid " ist "
 msgstr " is "
 
-msgctxt "#30021"
-msgid "Spielt grade: "
-msgstr "Is playing: "
+#msgctxt "#30021"
+#msgid "Spielt grade: "
+#msgstr "Is playing: "
 
 msgctxt "#30022"
 msgid "Zuletzt gesehen: "
@@ -53,8 +57,12 @@ msgstr "API-Key"
 
 msgctxt "#30115"
 msgid "Zeige Freunde Fanart"
-msgstr "Show Friends fanart"
+msgstr "Show friends fanart"
 
 msgctxt "#30116"
 msgid "Zeige Freunde Thumb"
-msgstr "Show Friends thumb"
+msgstr "Show friends thumb"
+
+msgctxt "#30121"
+msgid "Lade hi-res Screenshot Fanart"
+msgstr "Get hi-res screenshot fanart"
