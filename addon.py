@@ -30,12 +30,12 @@ except KeyError:
     #create popup
 
 def root():
-    addDir(get_translation(30005), '', 'recs', '', '', '')
-    addDir(get_translation(30006), '', 'scrn', '', '', '')
-    addDir(get_translation(30007), '', 'fnds', '', '', '')
+    addDir(get_translation(30005), str(xuid), 'recs', '', '', '')
+    addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
+    addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
 
 
-def get_recordings():
+def get_recordings(xuid):
     data = xbl.get_user_gameclips(xuid)
     for rec in data:
         if rec['state'] == 'Published':
@@ -79,7 +79,7 @@ def get_friends(xuid):
         addDir(name, fr_xuid, 'frnd', thumb, fanart,  gmrsc)
 
 
-def get_user_presence(name, xuid):
+def get_user_presence(xuid):
     data = xbl.get_user_presence(xuid)
     gmrsc = xbmc.getInfoLabel("ListItem.Writer")
     thumb = xbmc.getInfoLabel("ListItem.Thumb")
@@ -110,6 +110,9 @@ def get_user_presence(name, xuid):
         addDir(state, '', 'end', thumb, fanart, '')
     gmrsc = get_translation(30023) + gmrsc
     addDir(gmrsc, '', 'end', thumb, fanart, '')
+    addDir(get_translation(30005), xuid, 'recs', '', '', '')
+    addDir(get_translation(30006), xuid, 'scrn', '', '', '')
+    addDir(get_translation(30007), xuid, 'fnds', '', '', '')
 
 
 def addDir(name, url, mode, iconimage, fanart, extra1):
@@ -173,13 +176,13 @@ if type(url) == type(str()):
 
 
 if mode == 'recs':
-    get_recordings()
+    get_recordings(url)
 elif mode == 'scrn':
-    get_screenshots(xuid)
+    get_screenshots(url)
 elif mode == 'fnds':
-    get_friends(xuid)
+    get_friends(url)
 elif mode == 'frnd':
-    get_user_presence(name, url)
+    get_user_presence(url)
 elif mode == 'play':
     play(url)
 elif mode == 'end':
