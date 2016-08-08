@@ -16,14 +16,34 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+
 msgctxt "#30005"
 msgid "Aufnahmen"
 msgstr "Recordings"
 
-#empty strings id 30001 - 30011
+msgctxt "#30006"
+msgid "Screenshots"
+msgstr "Screenshots"
 
+msgctxt "#30007"
+msgid "Freunde"
+msgstr "Friends"
 
+msgctxt "#30020"
+msgid " ist "
+msgstr " is "
 
+#msgctxt "#30021"
+#msgid "Spielt grade: "
+#msgstr "Is playing: "
+
+msgctxt "#30022"
+msgid "Zuletzt gesehen: "
+msgstr "Last seen: "
+
+msgctxt "#30023"
+msgid "Gamerscore: "
+msgstr "Gamerscore: "
 
 #settings
 
@@ -31,7 +51,18 @@ msgctxt "#30100"
 msgid "Allgemein"
 msgstr "General"
 
-
 msgctxt "#30110"
-msgid "API-Key (xboxapi.com)"
-msgstr "API-Key (xboxapi.com)"
+msgid "API-Key"
+msgstr "API-Key"
+
+msgctxt "#30115"
+msgid "Zeige Freunde Fanart"
+msgstr "Show friends fanart"
+
+msgctxt "#30116"
+msgid "Zeige Freunde Thumb"
+msgstr "Show friends thumb"
+
+msgctxt "#30121"
+msgid "Lade hi-res Screenshot Fanart"
+msgstr "Get hi-res screenshot fanart"

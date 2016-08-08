@@ -21,18 +21,48 @@ msgctxt "#30005"
 msgid "Recordings"
 msgstr ""
 
-#empty strings id 30001 - 30011
+msgctxt "#30006"
+msgid "Screenshots"
+msgstr ""
 
+msgctxt "#30007"
+msgid "Friends"
+msgstr ""
 
+msgctxt "#30020"
+msgid " is "
+msgstr ""
 
+#msgctxt "#30021"
+#msgid "Is playing: "
+#msgstr ""
+
+msgctxt "#30022"
+msgid "Last seen: "
+msgstr ""
+
+msgctxt "#30023"
+msgid "Gamerscore: "
+msgstr ""
 
 #settings
 
 msgctxt "#30100"
-msgid "Generali"
+msgid "General"
 msgstr ""
-
 
 msgctxt "#30110"
 msgid "API-Key"
+msgstr ""
+
+msgctxt "#30115"
+msgid "Show friends fanart"
+msgstr ""
+
+msgctxt "#30116"
+msgid "Show friends thumb"
+msgstr ""
+
+msgctxt "#30121"
+msgid "Get hi-res screenshot fanart"
 msgstr ""
