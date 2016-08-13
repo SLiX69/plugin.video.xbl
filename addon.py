@@ -15,12 +15,15 @@ log_msg = addonID + ' - '
 fr_fanart = False
 fr_thumb = False
 sc_thumb = False
+gm_xb360 = False
 api_key = addon.getSetting('api-key')
+lang = addon.getSetting('language')
 if addon.getSetting('fr_fanart') == 'true': fr_fanart = True
 if addon.getSetting('fr_thumb') == 'true': fr_thumb = True
 if addon.getSetting('sc_thumb') == 'true': sc_thumb = True
+if addon.getSetting('gm_xb360') == 'true': gm_xb360 = True
 
-xbl = XboxApi(api_key)
+xbl = XboxApi(api_key, lang)
 
 try:
     xuid = xbl.get_xuid()['xuid']
@@ -33,6 +36,7 @@ def root():
     addDir(get_translation(30005), str(xuid), 'recs', '', '', '')
     addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
     addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
+    addDir(get_translation(30008), str(xuid), 'gams', '', '', '')
 
 
 def get_recordings(xuid):
@@ -79,6 +83,71 @@ def get_friends(xuid):
         addDir(name, fr_xuid, 'frnd', thumb, fanart,  gmrsc)
 
 
+def get_games(xuid):
+    games = []
+    data = xbl.get_user_xone_games(xuid)
+    for game in data['titles']:
+        name = game['name'].encode('utf-8')
+        titleId = str(game['titleId'])
+        game = {'name': name, 'titleId': titleId}
+        games.append(game)
+    #optional get xbox 360 games
+    if gm_xb360:
+        data = xbl.get_user_x360_games(xuid)
+        for game in data['titles']:
+            name = game['name'].encode('utf-8')
+            titleId = str(game['titleId'])
+            game = {'name': name, 'titleId': titleId}
+            games.append(game)
+    for game in games:
+        name = game['name']
+        titleId = str(game['titleId'])
+        addDir(name, xuid, 'game', '', '', titleId)
+
+
+def get_game(xuid, titleId):
+    addDir(get_translation(30031), xuid, 'achv', '', '', titleId)  # Achievements
+    addDir(get_translation(30033), xuid, 'recs_titl', '', '', titleId)  # Recordings
+    addDir(get_translation(30034), xuid, 'scrn_titl', '', '', titleId)  # Screenshots
+
+
+def get_achievements(xuid, titleId):
+    data = xbl.get_user_achievements_by_title(xuid, titleId)
+    for achiev in data:
+        xbmc.log(str(achiev))
+        name = achiev['name'].encode('utf-8')
+        addDir(name, '', '', '', '', '')
+
+def get_recordings_for_title(titleId):
+    data = xbl.get_user_gameclips_by_title(titleId)
+    for rec in data:
+        if rec['state'] == 'Published':
+            name = rec['titleName'].encode('utf-8')
+            #xbmc.log(name)
+            name += ' ' + rec['dateRecorded'].encode('utf-8')
+            url1 = rec['gameClipUris'][0]['uri']
+            thumb_sma = rec['thumbnails'][0]['uri']
+            thumb_big = rec['thumbnails'][1]['uri']
+            xbmc.log(name)
+            xbmc.log(url1)
+            addLink(name, url1, 'play', thumb_sma, '', '', '', thumb_big)
+
+def get_screens_for_title(titleId):
+    data = xbl.get_screenshots_by_title(titleId)
+    for pic in data:
+        xbmc.log(str(pic))
+        name = pic['titleName'].encode('utf-8')
+        name += ' ' + pic['dateTaken'].encode('utf-8')
+        url1 = pic['screenshotUris'][0]['uri']
+        thumb = pic['thumbnails'][0]['uri']
+        fanart = pic['thumbnails'][1]['uri']
+        if sc_thumb:
+            fanart = url1
+        #addLink(name, url1, 'play', '', '', '', '', '')
+        addImage(name, url1, thumb, fanart, 0)
+
+
+
 def get_user_presence(xuid):
     data = xbl.get_user_presence(xuid)
     gmrsc = xbmc.getInfoLabel("ListItem.Writer")
@@ -116,7 +185,7 @@ def get_user_presence(xuid):
 
 
 def addDir(name, url, mode, iconimage, fanart, extra1):
-    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name)# + "&extra1=" + str(extra1)
+    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name) + "&extra1=" + str(extra1)
     ok = True
     item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     item.setInfo(type="Video", infoLabels={"Title": name, "Writer": extra1})
@@ -125,7 +194,7 @@ def addDir(name, url, mode, iconimage, fanart, extra1):
 
 
 def addLink(name, url, mode, iconimage, desc, duration, date, fanart):
-    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode)
+    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode)# + "&extra1=" + str(extra1)
     ok = True
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     item.setInfo(type="Video", infoLabels={'Genre': 'Xbox Live Recording', "Title": name, "Plot": desc, "Duration": duration, "dateadded": date})
@@ -170,7 +239,7 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = params.get('mode')
 url = params.get('url')
 name = params.get('name')
-#extra1 = params.get('extra1')
+extra1 = params.get('extra1')
 if type(url) == type(str()):
     url = unquote_plus(url)
 
@@ -183,6 +252,16 @@ elif mode == 'fnds':
     get_friends(url)
 elif mode == 'frnd':
     get_user_presence(url)
+elif mode == 'gams':
+    get_games(url)
+elif mode == 'game':
+    get_game(url, extra1)
+elif mode == 'achv':
+    get_achievements(url, extra1)
+elif mode == 'recs_titl':
+    get_recordings_for_title(extra1)
+elif mode == 'scrn_titl':
+    get_screens_for_title(extra1)
 elif mode == 'play':
     play(url)
 elif mode == 'end':

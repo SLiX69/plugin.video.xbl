@@ -6,9 +6,10 @@ class XboxApi:
     # XboxApi key
     api_key = ""
 
-    def __init__(self, api_key):
+    def __init__(self, api_key, lang):
         """Only requires the XboxApi key"""
         self.api_key = api_key
+        self.language = lang
 
     def get_profile(self):
         """Return information for current token profile"""
@@ -95,17 +96,59 @@ class XboxApi:
         res = self.request("https://xboxapi.com/v2/{}/game-clips/{}".format(xuid, titleId))
         return res.json()
 
-    # continue with #18
+    # test !!
+    def get_gameclips_by_title(self, titleId):
+        """Return saved gameclips by titleId """
+        res = self.request("https://xboxapi.com/v2/game-clips/{}".format(titleId))
+        return res.json()
 
+    # test !!
     def get_user_screenshots(self, xuid):
         """Return screenshots by XUID"""
         res = self.request("https://xboxapi.com/v2/{}/screenshots".format(xuid))
         return res.json()
 
-    def get_user_screenshots_by_title(self, xuid):
-        """Return game clips by XUID"""
-        res = self.request("https://xboxapi.com/v2/{}/game-clips".format(xuid))
+    # test !!
+    #20
+    def get_user_screenshots_by_title(self, xuid, titleId):
+        """Return screenshots by XUID and titleId"""
+        res = self.request("https://xboxapi.com/v2/{}/screenshots/{}".format(xuid, titleId))
         return res.json()
+
+    # test !!
+    #21
+    def get_screenshots_by_title(self, titleid):
+        """Return screenshots by titleId"""
+        res = self.request("https://xboxapi.com/v2/screenshots/{}".format(titleid))
+        return res.json()
+
+    # test !!
+    #22
+    def get_user_game_stats_by_title(self, xuid, titleid):
+        """Return game-stats by XUID and titleId"""
+        res = self.request("https://xboxapi.com/v2/{}/game-stats/{}".format(xuid, titleid))
+        return res.json()
+    # test !!
+    #23
+    def get_user_x360_games(self, xuid):
+        """Return Xbox 360 games by XUID"""
+        res = self.request("https://xboxapi.com/v2/{}/xbox360games".format(xuid))
+        return res.json()
+    # test !!
+    #24
+    def get_user_xone_games(self, xuid):
+        """Return Xbox One games by XUID"""
+        res = self.request("https://xboxapi.com/v2/{}/xboxonegames".format(xuid))
+        return res.json()
+    # test !!
+    #25
+    def get_user_achievements_by_title(self, xuid, titleId):
+        """Return Xbox games achievements by XUID and titleId"""
+        res = self.request("https://xboxapi.com/v2/{}/achievements/{}".format(xuid, titleId))
+        return res.json()
+
+
+
 
     def send_message(self, message, xuids=[]):
         """Send a message to a set of user(s)"""
@@ -127,6 +170,9 @@ class XboxApi:
 
     def request(self, url):
         """Wrapper on the requests.get"""
-        headers = {"X-AUTH": self.api_key}
+        headers = {
+            "X-AUTH": self.api_key,
+            "Accept-Language": self.language
+        }
         res = requests.get(url, headers=headers, verify=False)
         return res

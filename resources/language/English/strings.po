@@ -29,6 +29,10 @@ msgctxt "#30007"
 msgid "Friends"
 msgstr ""
 
+msgctxt "#30008"
+msgid "Games"
+msgstr ""
+
 msgctxt "#30020"
 msgid " is "
 msgstr ""
@@ -45,6 +49,18 @@ msgctxt "#30023"
 msgid "Gamerscore: "
 msgstr ""
 
+msgctxt "#30031"
+msgid "Achievements"
+msgstr ""
+
+msgctxt "#30033"
+msgid "Recordings"
+msgstr ""
+
+msgctxt "#30034"
+msgid "Screenshots"
+msgstr ""
+
 #settings
 
 msgctxt "#30100"
@@ -53,6 +69,10 @@ msgstr ""
 
 msgctxt "#30110"
 msgid "API-Key"
+msgstr ""
+
+msgctxt "#30111"
+msgid "Language (eg achievement titles)"
 msgstr ""
 
 msgctxt "#30115"
@@ -65,4 +85,8 @@ msgstr ""
 
 msgctxt "#30121"
 msgid "Get hi-res screenshot fanart"
+msgstr ""
+
+msgctxt "#30125"
+msgid "List Xbox 360 games"
 msgstr ""
