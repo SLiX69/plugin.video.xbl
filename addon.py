@@ -16,12 +16,14 @@ fr_fanart = False
 fr_thumb = False
 sc_thumb = False
 gm_xb360 = False
+gm_yours = False
 api_key = addon.getSetting('api-key')
 lang = addon.getSetting('language')
 if addon.getSetting('fr_fanart') == 'true': fr_fanart = True
 if addon.getSetting('fr_thumb') == 'true': fr_thumb = True
 if addon.getSetting('sc_thumb') == 'true': sc_thumb = True
 if addon.getSetting('gm_xb360') == 'true': gm_xb360 = True
+if addon.getSetting('gm_yours') == 'true': gm_yours = True
 
 xbl = XboxApi(api_key, lang)
 
@@ -37,35 +39,6 @@ def root():
     addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
     addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
     addDir(get_translation(30008), str(xuid), 'gams', '', '', '')
-
-
-def get_recordings(xuid):
-    data = xbl.get_user_gameclips(xuid)
-    for rec in data:
-        if rec['state'] == 'Published':
-            name = rec['titleName'].encode('utf-8')
-            #xbmc.log(name)
-            name += ' ' + rec['dateRecorded'].encode('utf-8')
-            url1 = rec['gameClipUris'][0]['uri']
-            thumb_sma = rec['thumbnails'][0]['uri']
-            thumb_big = rec['thumbnails'][1]['uri']
-            xbmc.log(name)
-            xbmc.log(url1)
-            addLink(name, url1, 'play', thumb_sma, '', '', '', thumb_big)
-
-
-def get_screenshots(xuid):
-    data = xbl.get_user_screenshots(xuid)
-    for pic in data:
-        name = pic['titleName'].encode('utf-8')
-        name += ' ' + pic['dateTaken'].encode('utf-8')
-        url1 = pic['screenshotUris'][0]['uri']
-        thumb = pic['thumbnails'][0]['uri']
-        fanart = pic['thumbnails'][1]['uri']
-        if sc_thumb:
-            fanart = url1
-        #addLink(name, url1, 'play', '', '', '', '', '')
-        addImage(name, url1, thumb, fanart, 0)
 
 
 def get_friends(xuid):
@@ -110,7 +83,9 @@ def get_game(xuid, titleId):
     addDir(get_translation(30031), xuid, 'achv', '', '', titleId)  # Achievements
     addDir(get_translation(30033), xuid, 'recs_titl', '', '', titleId)  # Recordings
     addDir(get_translation(30034), xuid, 'scrn_titl', '', '', titleId)  # Screenshots
-
+    if gm_yours:
+        addDir(get_translation(30038), xuid, 'recs_your', '', '', titleId)  # Your Recordings
+        addDir(get_translation(30039), xuid, 'scrn_your', '', '', titleId)  # Your Screenshots
 
 
 def get_game_stats(xuid, titleId):
@@ -125,8 +100,6 @@ def get_game_stats(xuid, titleId):
         stat = {'name': name, 'value': value}
         stats.append(stat)
     for i in data['groups'][0]['statlistscollection'][0]['stats']:
-
-        name = i['name'].encode('utf-8')
         name = i['groupproperties']['DisplayName'].encode('utf-8')
         if 'value' in i:
             value = str(i['value']).encode('utf-8')
@@ -134,7 +107,7 @@ def get_game_stats(xuid, titleId):
             value = ''
         stat = {'name': name, 'value': value}
         stats.append(stat)
-
+    # List stats
     for i in stats:
         name = i['name']
         value = i['value']
@@ -149,23 +122,37 @@ def get_achievements(xuid, titleId):
         addDir(name, '', '', '', '', '')
 
 
+def get_recordings(xuid):
+    data = xbl.get_user_gameclips(xuid)
+    list_recordings(data)
+
+
 def get_recordings_for_title(titleId):
     data = xbl.get_gameclips_by_title(titleId)
-    for rec in data:
-        if rec['state'] == 'Published':
-            name = rec['titleName'].encode('utf-8')
-            #xbmc.log(name)
-            name += ' ' + rec['dateRecorded'].encode('utf-8')
-            url1 = rec['gameClipUris'][0]['uri']
-            thumb_sma = rec['thumbnails'][0]['uri']
-            thumb_big = rec['thumbnails'][1]['uri']
-            xbmc.log(name)
-            xbmc.log(url1)
-            addLink(name, url1, 'play', thumb_sma, '', '', '', thumb_big)
+    list_recordings(data)
+
+
+def get_user_recordings_for_title(xuid, titleId):
+    data = xbl.get_user_gameclips_by_title(xuid, titleId)
+    list_recordings(data)
+
+
+def get_screenshots(xuid):
+    data = xbl.get_user_screenshots(xuid)
+    list_screenshots(data)
 
 
 def get_screens_for_title(titleId):
     data = xbl.get_screenshots_by_title(titleId)
+    list_screenshots(data)
+
+
+def get_user_screens_for_title(xuid, titleId):
+    data = xbl.get_user_screenshots_by_title(xuid, titleId)
+    list_screenshots(data)
+
+
+def list_screenshots(data):
     for pic in data:
         xbmc.log(str(pic))
         name = pic['titleName'].encode('utf-8')
@@ -177,6 +164,20 @@ def get_screens_for_title(titleId):
             fanart = url1
         #addLink(name, url1, 'play', '', '', '', '', '')
         addImage(name, url1, thumb, fanart, 0)
+
+
+def list_recordings(data):
+    for rec in data:
+        if rec['state'] == 'Published':
+            name = rec['titleName'].encode('utf-8')
+            #xbmc.log(name)
+            name += ' ' + rec['dateRecorded'].encode('utf-8')
+            url1 = rec['gameClipUris'][0]['uri']
+            thumb_sma = rec['thumbnails'][0]['uri']
+            thumb_big = rec['thumbnails'][1]['uri']
+            xbmc.log(name)
+            xbmc.log(url1)
+            addLink(name, url1, 'play', thumb_sma, '', '', '', thumb_big)
 
 
 def get_user_presence(xuid):
@@ -295,6 +296,10 @@ elif mode == 'recs_titl':
     get_recordings_for_title(extra1)
 elif mode == 'scrn_titl':
     get_screens_for_title(extra1)
+elif mode == 'recs_your':
+    get_user_recordings_for_title(url, extra1)
+elif mode == 'scrn_your':
+    get_user_screens_for_title(url, extra1)
 elif mode == 'play':
     play(url)
 elif mode == 'end':

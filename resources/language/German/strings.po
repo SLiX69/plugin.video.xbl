@@ -65,6 +65,14 @@ msgctxt "#30034"
 msgid "Screenshots"
 msgstr "Screenshots"
 
+msgctxt "#30038"
+msgid "Deine Aufnahmen"
+msgstr "Your recordings"
+
+msgctxt "#30039"
+msgid "Deine Screenshots"
+msgstr "Your screenshots"
+
 #settings
 
 msgctxt "#30100"
@@ -94,3 +102,7 @@ msgstr "Get hi-res screenshot fanart"
 msgctxt "#30125"
 msgid "Zeige Xbox 360 Games"
 msgstr "List Xbox 360 games"
+
+msgctxt "#30126"
+msgid "Zeige deine Screens und Recs in Games"
+msgstr "Show your screens and recs in games"
