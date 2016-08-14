@@ -119,7 +119,9 @@ def get_achievements(xuid, titleId):
     for achiev in data:
         xbmc.log(str(achiev))
         name = achiev['name'].encode('utf-8')
-        addDir(name, '', '', '', '', '')
+        fanart = achiev['mediaAssets'][0]['url']
+        desc = achiev['description'].encode('utf-8')
+        addDir(name, '', '', fanart, fanart, desc, True)
 
 
 def get_recordings(xuid):
@@ -216,11 +218,15 @@ def get_user_presence(xuid):
     addDir(get_translation(30007), xuid, 'fnds', '', '', '')
 
 
-def addDir(name, url, mode, iconimage, fanart, extra1):
+def addDir(name, url, mode, iconimage, fanart, extra1, desc=False):
     u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name) + "&extra1=" + str(extra1)
     ok = True
     item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-    item.setInfo(type="Video", infoLabels={"Title": name, "Writer": extra1})
+    item.setInfo(type="Video", infoLabels={"Title": name})
+    if desc:
+        item.setInfo(type="Video", infoLabels={"Plot": extra1})
+    else:
+        item.setInfo(type="Video", infoLabels={"Writer": extra1})
     item.setProperty('fanart_image', fanart)
     xbmcplugin.addDirectoryItem(handle=pluginhandle, url=u, listitem=item, isFolder=True)
 
