@@ -114,13 +114,21 @@ def get_game_stats(xuid, titleId):
         name += ' ' + value
         addDir(name, '', '', '', '', '')
 
+
 def get_achievements(xuid, titleId):
     data = xbl.get_user_achievements_by_title(xuid, titleId)
     for achiev in data:
-        xbmc.log(str(achiev))
-        name = achiev['name'].encode('utf-8')
+        name = (achiev['name']).encode('utf-8')
+        if achiev['progressState'] == 'Achieved':
+            value = '[COLOR green]%sGS[/COLOR]' % achiev['rewards'][0]['value']
+            date = get_clean_datetime(achiev['progression']['timeUnlocked']).encode('utf-8')
+            desc = date + (get_translation(30051) + '\n').encode('utf-8')
+            desc += achiev['description'].encode('utf-8')
+        elif achiev['progressState'] == 'NotStarted':
+            value = '[COLOR red]%sGS[/COLOR]' % achiev['rewards'][0]['value']
+            desc = achiev['description'].encode('utf-8')
+        name += ' - ' + value
         fanart = achiev['mediaAssets'][0]['url']
-        desc = achiev['description'].encode('utf-8')
         addDir(name, '', '', fanart, fanart, desc, True)
 
 
@@ -255,6 +263,12 @@ def play(url):
         xbmcplugin.setResolvedUrl(pluginhandle, succeeded=True, listitem=listitem)
     except ValueError:
         pass
+
+
+def get_clean_datetime(date_string):
+    date = date_string[:10]
+    time = date_string[11:19]
+    return '%s %s' % (date, time)
 
 
 def get_translation(string_id):

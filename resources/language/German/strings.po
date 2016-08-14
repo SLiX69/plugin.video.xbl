@@ -73,6 +73,10 @@ msgctxt "#30039"
 msgid "Deine Screenshots"
 msgstr "Your screenshots"
 
+msgctxt "#30051"
+msgid " freigeschaltet"
+msgstr " achieved"
+
 #settings
 
 msgctxt "#30100"
