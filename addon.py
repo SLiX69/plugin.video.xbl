@@ -106,10 +106,40 @@ def get_games(xuid):
 
 
 def get_game(xuid, titleId):
+    addDir(get_translation(30030), xuid, 'stat', '', '', titleId)  # Game-Stats
     addDir(get_translation(30031), xuid, 'achv', '', '', titleId)  # Achievements
     addDir(get_translation(30033), xuid, 'recs_titl', '', '', titleId)  # Recordings
     addDir(get_translation(30034), xuid, 'scrn_titl', '', '', titleId)  # Screenshots
 
+
+
+def get_game_stats(xuid, titleId):
+    stats = []
+    data = xbl.get_user_game_stats_by_title(xuid, titleId)
+    for i in data['statlistscollection'][0]['stats']:
+        name = i['name'].encode('utf-8')
+        if 'value' in i:
+            value = str(i['value']).encode('utf-8')
+        else:
+            value = ''
+        stat = {'name': name, 'value': value}
+        stats.append(stat)
+    for i in data['groups'][0]['statlistscollection'][0]['stats']:
+
+        name = i['name'].encode('utf-8')
+        name = i['groupproperties']['DisplayName'].encode('utf-8')
+        if 'value' in i:
+            value = str(i['value']).encode('utf-8')
+        else:
+            value = ''
+        stat = {'name': name, 'value': value}
+        stats.append(stat)
+
+    for i in stats:
+        name = i['name']
+        value = i['value']
+        name += ' ' + value
+        addDir(name, '', '', '', '', '')
 
 def get_achievements(xuid, titleId):
     data = xbl.get_user_achievements_by_title(xuid, titleId)
@@ -118,8 +148,9 @@ def get_achievements(xuid, titleId):
         name = achiev['name'].encode('utf-8')
         addDir(name, '', '', '', '', '')
 
+
 def get_recordings_for_title(titleId):
-    data = xbl.get_user_gameclips_by_title(titleId)
+    data = xbl.get_gameclips_by_title(titleId)
     for rec in data:
         if rec['state'] == 'Published':
             name = rec['titleName'].encode('utf-8')
@@ -131,6 +162,7 @@ def get_recordings_for_title(titleId):
             xbmc.log(name)
             xbmc.log(url1)
             addLink(name, url1, 'play', thumb_sma, '', '', '', thumb_big)
+
 
 def get_screens_for_title(titleId):
     data = xbl.get_screenshots_by_title(titleId)
@@ -145,7 +177,6 @@ def get_screens_for_title(titleId):
             fanart = url1
         #addLink(name, url1, 'play', '', '', '', '', '')
         addImage(name, url1, thumb, fanart, 0)
-
 
 
 def get_user_presence(xuid):
@@ -258,6 +289,8 @@ elif mode == 'game':
     get_game(url, extra1)
 elif mode == 'achv':
     get_achievements(url, extra1)
+elif mode == 'stat':
+    get_game_stats(url, extra1)
 elif mode == 'recs_titl':
     get_recordings_for_title(extra1)
 elif mode == 'scrn_titl':

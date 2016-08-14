@@ -49,6 +49,10 @@ msgctxt "#30023"
 msgid "Gamerscore: "
 msgstr ""
 
+msgctxt "#30030"
+msgid "Game stats"
+msgstr ""
+
 msgctxt "#30031"
 msgid "Achievements"
 msgstr ""
