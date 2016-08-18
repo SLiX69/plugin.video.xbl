@@ -2,11 +2,11 @@
 <settings>
     <category label="30100">
         <setting label="30110" type="text" id="api-key" default=""/>
-        <setting label="30111" type="text" id="language" default="en-GB"/>	
-		<setting label="30115" type="bool" id="fr_fanart" default="true"/>
-		<setting label="30116" type="bool" id="fr_thumb" default="true"/>
-		<setting label="30121" type="bool" id="sc_thumb" default="false"/>
-		<setting label="30125" type="bool" id="gm_xb360" default="false"/>
-		<setting label="30126" type="bool" id="gm_yours" default="false"/>
+        <setting label="30111" type="text" id="language" default="en-GB"/>
+        <setting label="30115" type="bool" id="fr_fanart" default="true"/>
+        <setting label="30116" type="bool" id="fr_thumb" default="true"/>
+        <setting label="30121" type="bool" id="sc_thumb" default="false"/>
+        <setting label="30125" type="bool" id="gm_xb360" default="false"/>
+        <setting label="30126" type="bool" id="gm_yours" default="false"/>
     </category>
 </settings>
