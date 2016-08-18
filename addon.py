@@ -25,6 +25,8 @@ if addon.getSetting('sc_thumb') == 'true': sc_thumb = True
 if addon.getSetting('gm_xb360') == 'true': gm_xb360 = True
 if addon.getSetting('gm_yours') == 'true': gm_yours = True
 
+
+
 xbl = XboxApi(api_key, lang)
 
 try:
@@ -35,6 +37,7 @@ except KeyError:
     #create popup
 
 def root():
+    #check_game_list_update()
     addDir(get_translation(30005), str(xuid), 'recs', '', '', '')
     addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
     addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
@@ -224,7 +227,14 @@ def get_user_presence(xuid):
     addDir(get_translation(30005), xuid, 'recs', '', '', '')
     addDir(get_translation(30006), xuid, 'scrn', '', '', '')
     addDir(get_translation(30007), xuid, 'fnds', '', '', '')
+    addDir(get_translation(30008), str(xuid), 'gams', '', '', '')
 
+'''
+def check_game_list_update():
+    if addon.getSetting('up_games') == 'true':
+        #update_games_list()
+        addon.setSetting(id='up_games', value='false')
+'''
 
 def addDir(name, url, mode, iconimage, fanart, extra1, desc=False):
     u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name) + "&extra1=" + str(extra1)
