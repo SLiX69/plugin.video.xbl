@@ -146,9 +146,96 @@ class XboxApi:
         """Return Xbox games achievements by XUID and titleId"""
         res = self.request("https://xboxapi.com/v2/{}/achievements/{}".format(xuid, titleId))
         return res.json()
+    # test !!
+    #26
+    def get_game_details_hex(self, titleId):
+        """Return the Xbox Game Information (using the game id in hex format)"""
+        res = self.request("https://xboxapi.com/v2/game-details-hex/{}".format(titleId))
+        return res.json()
 
+    # test !!
+    #27
+    def get_game_details(self, productId):
+        """Return the Xbox Game Information (using the product id)"""
+        res = self.request("https://xboxapi.com/v2/game-details/{}".format(productId))
+        return res.json()
 
+    # test !!
+    #28
+    def get_game_details_addon(self, productId):
+        """Return the Xbox Game Information (using the product id)"""
+        res = self.request("https://xboxapi.com/v2/game-details/{}/addons".format(productId))
+        return res.json()
 
+    # test !!
+    #29
+    def get_game_details_related(self, productId):
+        """Return the Xbox Game Information (using the product id)"""
+        res = self.request("https://xboxapi.com/v2/game-details/{}/related".format(productId))
+        return res.json()
+
+    # test !!
+    #30
+    def get_latest_x360_games(self):
+        """Return latest Xbox 360 games from Xbox Live Marketplace"""
+        res = self.request("https://xboxapi.com/v2/latest-xbox360-games")
+        return res.json()
+
+    # test !!
+    #31
+    def get_latest_xone_games(self):
+        """Return latest Xbox One games from Xbox Live Marketplace"""
+        res = self.request("https://xboxapi.com/v2/latest-xboxone-games")
+        return res.json()
+
+    # test !!
+    #32
+    def get_latest_xone_apps(self):
+        """Return latest Xbox One Apps from Xbox Live Marketplace"""
+        res = self.request("https://xboxapi.com/v2/latest-xboxone-apps")
+        return res.json()
+
+    # test !!
+    #33
+    def get_gold_lounge(self):
+        """Return GwG and DwG (Games and Deals with Gold)"""
+        res = self.request("https://xboxapi.com/v2/xboxone-gold-lounge")
+        return res.json()
+
+    # test !!
+    #34
+    def get_market_x360_games(self):
+        """Return Xbox 360 Games Marketplace"""
+        res = self.request("https://xboxapi.com/v2/browse-marketplace/xbox360/1?sort=releaseDate")
+        return res.json()
+
+    # test !!
+    #35
+    def get_market_xone_games(self):
+        """Return Xbox One Games Marketplace"""
+        res = self.request("https://xboxapi.com/v2/browse-marketplace/games/1?sort=releaseDate")
+        return res.json()
+
+    # test !!
+    #36
+    def get_market_xone_apps(self):
+        """Return Xbox One Apps Marketplace"""
+        res = self.request("https://xboxapi.com/v2/browse-marketplace/games/1?sort=releaseDate")
+        return res.json()
+
+    # test !!
+    #37
+    def get_activity_feed(self):
+        """Return your activity feed"""
+        res = self.request("https://xboxapi.com/v2/activity-feed")
+        return res.json()
+
+    # test !!
+    #38
+    def get_titlehub_achievement(self, xuid):
+        """Return your achievements list by game with friends who also play. (New TitleHub endpoint)"""
+        res = self.request("https://xboxapi.com/v2/{}/titlehub-achievement-list".format(xuid))
+        return res.json()
 
     def send_message(self, message, xuids=[]):
         """Send a message to a set of user(s)"""
