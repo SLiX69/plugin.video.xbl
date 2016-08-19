@@ -4,6 +4,7 @@
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon
 from urllib import quote, unquote_plus, unquote, urlencode, quote_plus, urlretrieve
 from resources.lib.xbox_api import XboxApi
+from resources.lib._json import write_json, read_json, check_file, check_dir_userdata, dir_db, dir_userdata, file_games
 
 addonID = "plugin.video.xbl"
 addon = xbmcaddon.Addon(id=addonID)
@@ -32,12 +33,13 @@ xbl = XboxApi(api_key, lang)
 try:
     xuid = xbl.get_xuid()['xuid']
 except KeyError:
-    pass
+    xuid = ''
     #login failed
     #create popup
 
 def root():
     #check_game_list_update()
+    #check_dir_userdata()
     addDir(get_translation(30005), str(xuid), 'recs', '', '', '')
     addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
     addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
@@ -56,10 +58,94 @@ def get_friends(xuid):
             thumb = friend['GameDisplayPicRaw']
         if fr_fanart:
             fanart = thumb
-        addDir(name, fr_xuid, 'frnd', thumb, fanart,  gmrsc)
+        addDir(name, fr_xuid, 'frnd', thumb, fanart, gmrsc)
 
 
 def get_games(xuid):
+    if addon.getSetting('up_games') == 'true':
+        update_games()
+        addon.setSetting(id='up_games', value='false')
+    if check_file(file_games):
+        games = get_games_from_db()
+    else:
+        games = get_games_from_api(xuid)
+    list_games(games)
+
+
+def update_games():
+    xbmc.log('UPDATE GAMES')
+    check_dir_userdata()
+    games = []
+    data = xbl.get_user_xone_games(xuid)
+    for game in data['titles']:
+        titleId = str(game['titleId'])
+        game = get_game_details(titleId)
+        games.append(game)
+    #optional get xbox 360 games
+    if gm_xb360:
+        data = xbl.get_user_x360_games(xuid)
+        for game in data['titles']:
+            titleId = str(game['titleId'])
+            game = get_game_details(titleId)
+            games.append(game)
+    write_json(file_games, games)
+
+
+def get_games_from_db():
+    data = read_json(file_games)
+    return data
+
+
+def get_game_details(title_id):
+    xbmc.log(str(title_id))
+    title_id_hex = hex(int(title_id))[2:]
+    data = xbl.get_game_details_hex(title_id_hex)
+    name = data['Items'][0]['Name']
+    desc = data['Items'][0]['Description']
+    thumb, fanart = get_game_details_images(data['Items'][0]['Images'])
+    '''
+    thumb = data['Items'][0]['Images'][0]['Url']
+    try:
+        fanart = data['Items'][0]['Images'][9]['Url']
+    except:
+        fanart = ''
+    '''
+    game = {'name': name, 'titleId': title_id, 'thumb': thumb, 'desc': desc, 'fanart': fanart}
+    return game
+
+
+def list_games(games):
+    for game in games:
+        thumb = ''
+        fanart = ''
+        desc = ''
+        if 'thumb' in game:
+            thumb = game['thumb']
+        if 'fanart' in game:
+            fanart = game['fanart']
+        if 'desc' in game:
+            desc = game['desc']
+        name = game['name']
+        titleId = str(game['titleId'])
+        #xbmc.log(str(xuid))
+        #xbmc.log(str(name))
+        addDir(name, str(xuid), 'game', thumb, fanart, titleId)
+
+
+def get_game_details_images(data):
+    thumb = ''
+    fanart = ''
+    print data
+    for image in data:
+        print image
+        if image['Purpose'] == 'BrandedKeyArt':
+            thumb = image['Url']
+        if image['Purpose'] == 'TitledHeroArt':
+            fanart = image['Url']
+    return thumb, fanart
+
+
+def get_games_from_api(xuid):
     games = []
     data = xbl.get_user_xone_games(xuid)
     for game in data['titles']:
@@ -75,10 +161,7 @@ def get_games(xuid):
             titleId = str(game['titleId'])
             game = {'name': name, 'titleId': titleId}
             games.append(game)
-    for game in games:
-        name = game['name']
-        titleId = str(game['titleId'])
-        addDir(name, xuid, 'game', '', '', titleId)
+    return games
 
 
 def get_game(xuid, titleId):
@@ -224,17 +307,11 @@ def get_user_presence(xuid):
         addDir(state, '', 'end', thumb, fanart, '')
     gmrsc = get_translation(30023) + gmrsc
     addDir(gmrsc, '', 'end', thumb, fanart, '')
-    addDir(get_translation(30005), xuid, 'recs', '', '', '')
-    addDir(get_translation(30006), xuid, 'scrn', '', '', '')
-    addDir(get_translation(30007), xuid, 'fnds', '', '', '')
+    addDir(get_translation(30005), str(xuid), 'recs', '', '', '')
+    addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
+    addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
     addDir(get_translation(30008), str(xuid), 'gams', '', '', '')
 
-'''
-def check_game_list_update():
-    if addon.getSetting('up_games') == 'true':
-        #update_games_list()
-        addon.setSetting(id='up_games', value='false')
-'''
 
 def addDir(name, url, mode, iconimage, fanart, extra1, desc=False):
     u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name) + "&extra1=" + str(extra1)

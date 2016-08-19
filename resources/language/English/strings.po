@@ -91,6 +91,10 @@ msgctxt "#30111"
 msgid "Language (eg achievement titles)"
 msgstr ""
 
+msgctxt "#30112"
+msgid "Update games (once)"
+msgstr ""
+
 msgctxt "#30115"
 msgid "Show friends fanart"
 msgstr ""
