@@ -16,14 +16,14 @@ log_msg = addonID + ' - '
 fr_fanart = False
 fr_thumb = False
 sc_thumb = False
-gm_xb360 = False
+#gm_xb360 = False
 gm_yours = False
 api_key = addon.getSetting('api-key')
 lang = addon.getSetting('language')
 if addon.getSetting('fr_fanart') == 'true': fr_fanart = True
 if addon.getSetting('fr_thumb') == 'true': fr_thumb = True
 if addon.getSetting('sc_thumb') == 'true': sc_thumb = True
-if addon.getSetting('gm_xb360') == 'true': gm_xb360 = True
+#if addon.getSetting('gm_xb360') == 'true': gm_xb360 = True
 if addon.getSetting('gm_yours') == 'true': gm_yours = True
 
 
@@ -40,10 +40,10 @@ except KeyError:
 def root():
     #check_game_list_update()
     #check_dir_userdata()
-    addDir(get_translation(30005), str(xuid), 'recs', '', '', '')
-    addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
-    addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
-    addDir(get_translation(30008), str(xuid), 'gams', '', '', '')
+    addDir(get_translation(30005), str(xuid), 'recs', '', '', '', '')
+    addDir(get_translation(30006), str(xuid), 'scrn', '', '', '', '')
+    addDir(get_translation(30007), str(xuid), 'fnds', '', '', '', '')
+    addDir(get_translation(30008), str(xuid), 'gams', '', '', '', '')
 
 
 def get_friends(xuid):
@@ -58,16 +58,20 @@ def get_friends(xuid):
             thumb = friend['GameDisplayPicRaw']
         if fr_fanart:
             fanart = thumb
-        addDir(name, fr_xuid, 'frnd', thumb, fanart, gmrsc)
+        addDir(name, fr_xuid, 'frnd', thumb, fanart, '', gmrsc)
 
 
-def get_games(xuid):
-    if addon.getSetting('up_games') == 'true':
-        update_games()
-        addon.setSetting(id='up_games', value='false')
-    if check_file(file_games):
-        games = get_games_from_db()
-    else:
+def get_games(xuid, mode):
+    games = {}
+    if mode == 'gams':
+        if addon.getSetting('up_games') == 'true':
+            update_games()
+            addon.setSetting(id='up_games', value='false')
+        if check_file(file_games):
+            games = get_games_from_db()
+        else:
+            games = get_games_from_api(xuid)
+    elif mode == 'gams_frnd':
         games = get_games_from_api(xuid)
     list_games(games)
 
@@ -82,12 +86,14 @@ def update_games():
         game = get_game_details(titleId)
         games.append(game)
     #optional get xbox 360 games
+    '''
     if gm_xb360:
         data = xbl.get_user_x360_games(xuid)
         for game in data['titles']:
             titleId = str(game['titleId'])
-            game = get_game_details(titleId)
+            #game = get_game_details(titleId)
             games.append(game)
+    '''
     write_json(file_games, games)
 
 
@@ -103,13 +109,6 @@ def get_game_details(title_id):
     name = data['Items'][0]['Name']
     desc = data['Items'][0]['Description']
     thumb, fanart = get_game_details_images(data['Items'][0]['Images'])
-    '''
-    thumb = data['Items'][0]['Images'][0]['Url']
-    try:
-        fanart = data['Items'][0]['Images'][9]['Url']
-    except:
-        fanart = ''
-    '''
     game = {'name': name, 'titleId': title_id, 'thumb': thumb, 'desc': desc, 'fanart': fanart}
     return game
 
@@ -124,12 +123,13 @@ def list_games(games):
         if 'fanart' in game:
             fanart = game['fanart']
         if 'desc' in game:
-            desc = game['desc']
-        name = game['name']
+            desc = game['desc'].encode('utf-8')
+        name = game['name'].encode('utf-8')
+        #xbmc.log(name)
         titleId = str(game['titleId'])
         #xbmc.log(str(xuid))
         #xbmc.log(str(name))
-        addDir(name, str(xuid), 'game', thumb, fanart, titleId)
+        addDir(name, str(xuid), 'game', thumb, fanart, desc, titleId)
 
 
 def get_game_details_images(data):
@@ -149,11 +149,12 @@ def get_games_from_api(xuid):
     games = []
     data = xbl.get_user_xone_games(xuid)
     for game in data['titles']:
-        name = game['name'].encode('utf-8')
+        name = game['name']#.encode('utf-8')
         titleId = str(game['titleId'])
         game = {'name': name, 'titleId': titleId}
         games.append(game)
     #optional get xbox 360 games
+    '''
     if gm_xb360:
         data = xbl.get_user_x360_games(xuid)
         for game in data['titles']:
@@ -161,17 +162,18 @@ def get_games_from_api(xuid):
             titleId = str(game['titleId'])
             game = {'name': name, 'titleId': titleId}
             games.append(game)
+    '''
     return games
 
 
 def get_game(xuid, titleId):
-    addDir(get_translation(30030), xuid, 'stat', '', '', titleId)  # Game-Stats
-    addDir(get_translation(30031), xuid, 'achv', '', '', titleId)  # Achievements
-    addDir(get_translation(30033), xuid, 'recs_titl', '', '', titleId)  # Recordings
-    addDir(get_translation(30034), xuid, 'scrn_titl', '', '', titleId)  # Screenshots
+    addDir(get_translation(30030), xuid, 'stat', '', '', '', titleId)  # Game-Stats
+    addDir(get_translation(30031), xuid, 'achv', '', '', '', titleId)  # Achievements
+    addDir(get_translation(30033), xuid, 'recs_titl', '', '', '', titleId)  # Recordings
+    addDir(get_translation(30034), xuid, 'scrn_titl', '', '', '', titleId)  # Screenshots
     if gm_yours:
-        addDir(get_translation(30038), xuid, 'recs_your', '', '', titleId)  # Your Recordings
-        addDir(get_translation(30039), xuid, 'scrn_your', '', '', titleId)  # Your Screenshots
+        addDir(get_translation(30038), xuid, 'recs_your', '', '', '', titleId)  # Your Recordings
+        addDir(get_translation(30039), xuid, 'scrn_your', '', '', '', titleId)  # Your Screenshots
 
 
 def get_game_stats(xuid, titleId):
@@ -198,7 +200,7 @@ def get_game_stats(xuid, titleId):
         name = i['name']
         value = i['value']
         name += ' ' + value
-        addDir(name, '', '', '', '', '')
+        addDir(name, '', '', '', '', '', '')
 
 
 def get_achievements(xuid, titleId):
@@ -215,7 +217,7 @@ def get_achievements(xuid, titleId):
             desc = achiev['description'].encode('utf-8')
         name += ' - ' + value
         fanart = achiev['mediaAssets'][0]['url']
-        addDir(name, '', '', fanart, fanart, desc, True)
+        addDir(name, '', '', fanart, fanart, desc, '')
 
 
 def get_recordings(xuid):
@@ -302,26 +304,22 @@ def get_user_presence(xuid):
         except:
             state += 'unknown'
     name += usr_state # add colored state to gamertag + 30020
-    addDir(name, '', 'end', thumb, fanart, '')
+    addDir(name, '', 'end', thumb, fanart, '', '')
     if 'lastSeen' in data or usr_state2 == 'Online':
-        addDir(state, '', 'end', thumb, fanart, '')
+        addDir(state, '', 'end', thumb, fanart, '', '')
     gmrsc = get_translation(30023) + gmrsc
-    addDir(gmrsc, '', 'end', thumb, fanart, '')
-    addDir(get_translation(30005), str(xuid), 'recs', '', '', '')
-    addDir(get_translation(30006), str(xuid), 'scrn', '', '', '')
-    addDir(get_translation(30007), str(xuid), 'fnds', '', '', '')
-    addDir(get_translation(30008), str(xuid), 'gams', '', '', '')
+    addDir(gmrsc, '', 'end', thumb, fanart, '', '')
+    addDir(get_translation(30005), str(xuid), 'recs', '', '', '', '')
+    addDir(get_translation(30006), str(xuid), 'scrn', '', '', '', '')
+    addDir(get_translation(30007), str(xuid), 'fnds', '', '', '', '')
+    addDir(get_translation(30008), str(xuid), 'gams_frnd', '', '', '', '')
 
 
-def addDir(name, url, mode, iconimage, fanart, extra1, desc=False):
+def addDir(name, url, mode, iconimage, fanart, desc, extra1):
     u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(name) + "&extra1=" + str(extra1)
     ok = True
     item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-    item.setInfo(type="Video", infoLabels={"Title": name})
-    if desc:
-        item.setInfo(type="Video", infoLabels={"Plot": extra1})
-    else:
-        item.setInfo(type="Video", infoLabels={"Writer": extra1})
+    item.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     item.setProperty('fanart_image', fanart)
     xbmcplugin.addDirectoryItem(handle=pluginhandle, url=u, listitem=item, isFolder=True)
 
@@ -392,7 +390,9 @@ elif mode == 'fnds':
 elif mode == 'frnd':
     get_user_presence(url)
 elif mode == 'gams':
-    get_games(url)
+    get_games(url, mode)
+elif mode == 'gams_frnd':
+    get_games(url, mode)
 elif mode == 'game':
     get_game(url, extra1)
 elif mode == 'achv':

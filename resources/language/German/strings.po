@@ -107,10 +107,6 @@ msgctxt "#30121"
 msgid "Lade hi-res Screenshot Fanart"
 msgstr "Get hi-res screenshot fanart"
 
-msgctxt "#30125"
-msgid "Zeige Xbox 360 Games"
-msgstr "List Xbox 360 games"
-
 msgctxt "#30126"
 msgid "Zeige deine Screens und Recs in Games"
 msgstr "Show your screens and recs in games"
