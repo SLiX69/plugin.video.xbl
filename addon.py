@@ -269,13 +269,17 @@ def list_recordings(data):
         if rec['state'] == 'Published':
             name = rec['titleName'].encode('utf-8')
             #xbmc.log(name)
-            name += ' ' + rec['dateRecorded'].encode('utf-8')
+            date_recorded = rec['dateRecorded'].encode('utf-8')
+            name += ' ' + date_recorded
             url1 = rec['gameClipUris'][0]['uri']
             thumb_sma = rec['thumbnails'][0]['uri']
             thumb_big = rec['thumbnails'][1]['uri']
-            xbmc.log(name)
-            xbmc.log(url1)
-            addLink(name, url1, 'play', thumb_sma, '', '', '', thumb_big)
+            duration = rec['durationInSeconds']
+            desc = 'rating: %s, ratingCount: %s, views: %s \ncommentCount: %s, likeCount: %s, shareCount: %s'\
+                   % (rec['rating'], rec['ratingCount'], rec['views'],
+                      rec['commentCount'], rec['likeCount'], rec['shareCount'])
+            addLink(name, url1, 'play', thumb_sma, desc, duration, date_recorded, thumb_big)
+
 
 
 def get_user_presence(xuid):
@@ -325,18 +329,18 @@ def addDir(name, url, mode, iconimage, fanart, desc, extra1):
 
 
 def addLink(name, url, mode, iconimage, desc, duration, date, fanart):
-    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode)# + "&extra1=" + str(extra1)
+    u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode)
     ok = True
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    item.setInfo(type="Video", infoLabels={'Genre': 'Xbox Live Recording', "Title": name, "Plot": desc, "Duration": duration, "dateadded": date})
+    item.setInfo(type="Video", infoLabels={'genre': 'Xbox Live', 'aired': date, 'title': name, 'plot': desc, 'duration': duration})
     item.setProperty('IsPlayable', 'true')
     item.setProperty('fanart_image', fanart)
-    xbmcplugin.addDirectoryItem(handle=pluginhandle, url=u, listitem=item)
+    xbmcplugin.addDirectoryItem(pluginhandle, url=u, listitem=item)
 
 
 def addImage(name, url, iconimage, fanart, tot=0):
     item = xbmcgui.ListItem(name, iconImage="DefaultImage.png", thumbnailImage=iconimage)
-    item.setInfo(type="image", infoLabels={"Id": name})
+    item.setInfo(type="image", infoLabels={"title": name})
     item.setProperty('fanart_image', fanart)
     return xbmcplugin.addDirectoryItem(handle=pluginhandle, url=url, listitem=item, totalItems=tot)
 
