@@ -29,6 +29,10 @@ msgctxt "#30007"
 msgid "Freunde"
 msgstr "Friends"
 
+msgctxt "#30008"
+msgid "Games"
+msgstr "Games"
+
 msgctxt "#30020"
 msgid " ist "
 msgstr " is "
@@ -45,6 +49,34 @@ msgctxt "#30023"
 msgid "Gamerscore: "
 msgstr "Gamerscore: "
 
+msgctxt "#30030"
+msgid "Game Stats"
+msgstr "Game stats"
+
+msgctxt "#30031"
+msgid "Erfolge"
+msgstr "Achievements"
+
+msgctxt "#30033"
+msgid "Aufnahmen"
+msgstr "Recordings"
+
+msgctxt "#30034"
+msgid "Screenshots"
+msgstr "Screenshots"
+
+msgctxt "#30038"
+msgid "Deine Aufnahmen"
+msgstr "Your recordings"
+
+msgctxt "#30039"
+msgid "Deine Screenshots"
+msgstr "Your screenshots"
+
+msgctxt "#30051"
+msgid " freigeschaltet"
+msgstr " achieved"
+
 #settings
 
 msgctxt "#30100"
@@ -54,6 +86,14 @@ msgstr "General"
 msgctxt "#30110"
 msgid "API-Key"
 msgstr "API-Key"
+
+msgctxt "#30111"
+msgid "Sprache (zB Titel der Erfolge)"
+msgstr "Language (eg achievement titles)"
+
+msgctxt "#30112"
+msgid "Update Games (einmal)"
+msgstr "Update games (once)"
 
 msgctxt "#30115"
 msgid "Zeige Freunde Fanart"
@@ -66,3 +106,7 @@ msgstr "Show friends thumb"
 msgctxt "#30121"
 msgid "Lade hi-res Screenshot Fanart"
 msgstr "Get hi-res screenshot fanart"
+
+msgctxt "#30126"
+msgid "Zeige deine Screens und Recs in Games"
+msgstr "Show your screens and recs in games"
